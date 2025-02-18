@@ -81,6 +81,7 @@
         /* Estilo do header para o nome do documento */
         header {
             padding: 10px;
+            width: 100%;
             background-color: #333;
             color: white;
             border-top-right-radius: 8px;
@@ -201,7 +202,44 @@
         // Função para formatar o texto no editor
         function formatText(command, value = null) {
             document.execCommand(command, false, value);
+
         }
+
+
+        function updateToolbar() {
+            let currentFontName = document.queryCommandValue("fontName").replace(/['"]+/g, '');
+            let currentFontSize = document.queryCommandValue("fontSize");
+
+            const fontNameSelect = document.querySelector('select[onchange*="fontName"]');
+            const fontSizeSelect = document.querySelector('select[onchange*="fontSize"]');
+
+            if (fontNameSelect) {
+                for (let i = 0; i < fontNameSelect.options.length; i++) {
+                    if (fontNameSelect.options[i].value.toLowerCase() === currentFontName.toLowerCase()) {
+                        fontNameSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (fontSizeSelect) {
+                for (let i = 0; i < fontSizeSelect.options.length; i++) {
+                    if (fontSizeSelect.options[i].value === currentFontSize) {
+                        fontSizeSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        const editor = document.getElementById("editor");
+        editor.addEventListener("keyup", updateToolbar);
+        editor.addEventListener("mouseup", updateToolbar);
+        document.addEventListener("selectionchange", function () {
+            if (document.activeElement === editor) {
+                updateToolbar();
+            }
+        });
 
         // Função para salvar o conteúdo como .txt ou .html
         function saveAsFile(fileType) {
